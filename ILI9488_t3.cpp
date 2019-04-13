@@ -66,8 +66,9 @@
 // specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
 ILI9488_t3::ILI9488_t3(SPIClass *SPIWire, uint8_t cs, uint8_t dc, uint8_t rst, uint8_t mosi, uint8_t sclk, uint8_t miso)
 {
+	spi_port = SPIWire;
 #if defined(__IMXRT1052__) || defined(__IMXRT1062__)
-	//_spi_port_memorymap = 0x4002C000;
+	_spi_port_memorymap = 0x403A0000;
 #elif defined(__MK20DX256__) || defined(__MK64FX512__) || defined(__MK66FX1M0__)
 	if ( SPIWire == (SPIClass*)&SPI ) _spi_port_memorymap = 0x4002C000;
 	if ( SPIWire == (SPIClass*)&SPI1 ) _spi_port_memorymap = 0x4002D000;
@@ -2940,15 +2941,15 @@ bool Adafruit_GFX_Button::contains(int16_t x, int16_t y)
 		}
 	}
 
-	void ILI9488_t3::beginSPITransaction(uint32_t clock = ILI9488_SPICLOCK) {
-		SPI.beginTransaction(SPISettings(clock, MSBFIRST, SPI_MODE0));
+	void ILI9488_t3::beginSPITransaction(uint32_t clock) {
+		spi_port->beginTransaction(SPISettings(clock, MSBFIRST, SPI_MODE0));
 		if (_csport)
 			DIRECT_WRITE_LOW(_csport, _cspinmask);
 	}
 	void ILI9488_t3::endSPITransaction() {
 		if (_csport)
 			DIRECT_WRITE_HIGH(_csport, _cspinmask);
-		SPI.endTransaction();
+		spi_port->endTransaction();
 	}
 
 	// BUGBUG:: currently assumming we only have CS_0 as valid CS

@@ -449,7 +449,8 @@ class ILI9488_t3 : public Print
     uint8_t		_use_fbtft;						// Are we in frame buffer mode?
     uint16_t	*_we_allocated_buffer;			// We allocated the buffer; 
 #endif
-
+	void DIRECT_WRITE_LOW(volatile uint32_t * base, uint32_t mask);
+	void DIRECT_WRITE_HIGH(volatile uint32_t * base, uint32_t mask);
 	void writecommand_cont(uint8_t c);
 	void writedata8_cont(uint8_t c); 
 	void writedata16_cont(uint16_t d);
